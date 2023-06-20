@@ -107,7 +107,7 @@ public class Program
 
         Graph graph = new Graph(V);
 
-        Console.WriteLine("Podaj krawędzie w formacie 'wierzchołek1 wierzchołek2' (oddzielone spacją) lub wpisz 'koniec' aby zakończyć:");
+        Console.WriteLine("Podaj krawędzie w formacie 'wierzchołek1 wierzchołek2' (oddzielone spacją) wpisz 'koniec' aby zakończyć:");
 
         while (true)
         {
