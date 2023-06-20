@@ -1,0 +1,156 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+
+public class Graph
+{
+    private int V; // liczba wierzchołków
+    private List<int>[] adjacencyList; // lista sąsiedztwa
+
+    public Graph(int v)
+    {
+        V = v;
+        adjacencyList = new List<int>[V];
+        for (int i = 0; i < V; i++)
+        {
+            adjacencyList[i] = new List<int>();
+        }
+    }
+
+    public void AddEdge(int v, int w)
+    {
+        adjacencyList[v].Add(w);
+    }
+
+    // Algorytm DFS (przeszukiwanie w głąb)
+    public void DFS(int startVertex)
+    {
+        bool[] visited = new bool[V];
+        List<int> visitedVertices = new List<int>();
+
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start(); // Start pomiaru czasu
+
+        DFSUtil(startVertex, visited, visitedVertices);
+
+        stopwatch.Stop(); // Zatrzymanie pomiaru czasu
+        double averageTime = stopwatch.Elapsed.TotalMilliseconds / visitedVertices.Count; // Obliczenie średniego czasu
+
+        Console.WriteLine("Kolejno odwiedzane wierzchołki (DFS):");
+        foreach (int vertex in visitedVertices)
+        {
+            Console.Write(vertex + " ");
+        }
+        Console.WriteLine("\nŚredni czas działania (DFS): " + averageTime + " ms");
+    }
+
+    private void DFSUtil(int v, bool[] visited, List<int> visitedVertices)
+    {
+        visited[v] = true;
+        visitedVertices.Add(v);
+
+        foreach (int neighbor in adjacencyList[v])
+        {
+            if (!visited[neighbor])
+            {
+                DFSUtil(neighbor, visited, visitedVertices);
+            }
+        }
+    }
+
+    // Algorytm BFS (przeszukiwanie wszerz)
+    public void BFS(int startVertex)
+    {
+        bool[] visited = new bool[V];
+        List<int> visitedVertices = new List<int>();
+
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start(); // Start pomiaru czasu
+
+        Queue<int> queue = new Queue<int>();
+        visited[startVertex] = true;
+        queue.Enqueue(startVertex);
+
+        while (queue.Count != 0)
+        {
+            int vertex = queue.Dequeue();
+            visitedVertices.Add(vertex);
+
+            foreach (int neighbor in adjacencyList[vertex])
+            {
+                if (!visited[neighbor])
+                {
+                    visited[neighbor] = true;
+                    queue.Enqueue(neighbor);
+                }
+            }
+        }
+
+        stopwatch.Stop(); // Zatrzymanie pomiaru czasu
+        double averageTime = stopwatch.Elapsed.TotalMilliseconds / visitedVertices.Count; // Obliczenie średniego czasu
+
+        Console.WriteLine("Kolejno odwiedzane wierzchołki (BFS):");
+        foreach (int vertex in visitedVertices)
+        {
+            Console.Write(vertex + " ");
+        }
+        Console.WriteLine("\nŚredni czas działania (BFS): " + averageTime + " ms");
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        Console.WriteLine("Podaj liczbę wierzchołków grafu:");
+        int V = int.Parse(Console.ReadLine());
+
+        Graph graph = new Graph(V);
+
+        Console.WriteLine("Podaj krawędzie w formacie 'wierzchołek1 wierzchołek2' (oddzielone spacją) lub wpisz 'koniec' aby zakończyć:");
+
+        while (true)
+        {
+            string input = Console.ReadLine();
+            if (input == "koniec")
+                break;
+
+            string[] vertices = input.Split(' ');
+            if (vertices.Length != 2)
+            {
+                Console.WriteLine("Nieprawidłowy format. Podaj krawędzie w formacie 'wierzchołek1 wierzchołek2'.");
+                continue;
+            }
+
+            int v, w;
+            if (!int.TryParse(vertices[0], out v) || !int.TryParse(vertices[1], out w))
+            {
+                Console.WriteLine("Nieprawidłowe wartości wierzchołków. Podaj poprawne liczby całkowite.");
+                continue;
+            }
+
+            graph.AddEdge(v, w);
+        }
+
+        Console.WriteLine("Wybierz algorytm:");
+        Console.WriteLine("1. DFS (przeszukiwanie w głąb)");
+        Console.WriteLine("2. BFS (przeszukiwanie wszerz)");
+        int choice = int.Parse(Console.ReadLine());
+
+        Console.WriteLine("Podaj wierzchołek startowy:");
+        int startVertex = int.Parse(Console.ReadLine());
+
+        if (choice == 1)
+        {
+            graph.DFS(startVertex);
+        }
+        else if (choice == 2)
+        {
+            graph.BFS(startVertex);
+        }
+        else
+        {
+            Console.WriteLine("Nieprawidłowy wybór algorytmu.");
+        }
+    }
+}
